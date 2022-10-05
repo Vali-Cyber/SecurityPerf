@@ -2,11 +2,11 @@ cmake_minimum_required(VERSION 3.11)
 
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY
-    /app/build
+    /app/build/bin
     CACHE PATH "Output directory for shared libraries.")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY
-    /app/build
+    /app/build/bin
     CACHE PATH "Output directory for executables and SO's.")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
