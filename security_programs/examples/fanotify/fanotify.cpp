@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/fanotify.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 static void handle_events(int fd)
@@ -74,51 +75,26 @@ static void handle_events(int fd)
    }
 }
 
-int main(int argc, char *argv[])
+int main()
 {
-   char buf;
-   int fd, poll_num;
-   nfds_t nfds;
-   struct pollfd fds[2];
-
-
-   if (argc != 2) {
-       fprintf(stderr, "Usage: %s MOUNT\n", argv[0]);
-       exit(EXIT_FAILURE);
-   }
-
-   printf("Press enter key to terminate.\n");
-
-
-   fd = fanotify_init(FAN_CLOEXEC | FAN_CLASS_CONTENT | FAN_NONBLOCK,
+   int fanotify_fd, poll_num;
+   struct pollfd poll_fd;
+   fanotify_fd = fanotify_init(FAN_CLOEXEC | FAN_CLASS_CONTENT | FAN_NONBLOCK,
                       O_RDONLY | O_LARGEFILE);
-   if (fd == -1) {
-       perror("fanotify_init");
-       exit(EXIT_FAILURE);
-   }
 
 
-   if (fanotify_mark(fd, FAN_MARK_ADD | FAN_MARK_MOUNT,
+   if (fanotify_mark(fanotify_fd, FAN_MARK_ADD | FAN_MARK_MOUNT,
                      FAN_OPEN_PERM | FAN_CLOSE_WRITE, AT_FDCWD,
-                     argv[1]) == -1) {
+                     "/") == -1) {
        perror("fanotify_mark");
        exit(EXIT_FAILURE);
    }
 
-
-   nfds = 2;
-
-   fds[0].fd = STDIN_FILENO;
-   fds[0].events = POLLIN;
-
-   fds[1].fd = fd;
-   fds[1].events = POLLIN;
-
-
-   printf("Listening for events.\n");
+   poll_fd.fd = fanotify_fd;
+   poll_fd.events = POLLIN;
 
    while (1) {
-       poll_num = poll(fds, nfds, -1);
+       poll_num = poll(&poll_fd, 1, -1);
        if (poll_num == -1) {
            if (errno == EINTR)
                continue;
@@ -128,18 +104,8 @@ int main(int argc, char *argv[])
        }
 
        if (poll_num > 0) {
-           if (fds[0].revents & POLLIN) {
-
-
-               while (read(STDIN_FILENO, &buf, 1) > 0 && buf != '\n')
-                   continue;
-               break;
-           }
-
-           if (fds[1].revents & POLLIN) {
-
-
-               handle_events(fd);
+           if (poll_fd.revents & POLLIN) {
+               handle_events(fanotify_fd);
            }
        }
    }
