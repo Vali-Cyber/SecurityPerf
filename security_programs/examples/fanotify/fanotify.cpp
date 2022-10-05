@@ -18,9 +18,6 @@ static void handle_events(int fd)
    const struct fanotify_event_metadata *metadata;
    struct fanotify_event_metadata buf[200];
    ssize_t len;
-   char path[PATH_MAX];
-   ssize_t path_len;
-   char procfd_path[PATH_MAX];
    struct fanotify_response response;
 
 
@@ -55,7 +52,7 @@ static void handle_events(int fd)
 
 
                if (metadata->mask & FAN_OPEN_PERM) {
-                   printf("FAN_OPEN_PERM: ");
+                   // printf("FAN_OPEN_PERM: ");
 
 
                    response.fd = metadata->fd;
@@ -66,22 +63,6 @@ static void handle_events(int fd)
                    }
                }
 
-
-               if (metadata->mask & FAN_CLOSE_WRITE)
-                   printf("FAN_CLOSE_WRITE: ");
-
-
-               snprintf(procfd_path, sizeof(procfd_path),
-                        "/proc/self/fd/%d", metadata->fd);
-               path_len = readlink(procfd_path, path,
-                                   sizeof(path) - 1);
-               if (path_len == -1) {
-                   perror("readlink");
-                   exit(EXIT_FAILURE);
-               }
-
-               path[path_len] = '\0';
-               printf("File %s\n", path);
 
 
                close(metadata->fd);
