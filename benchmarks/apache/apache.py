@@ -37,7 +37,7 @@ class ApacheBenchmark(Benchmark):
 
         os.makedirs("%s/results/%s" % (os.getcwd(), self.name), exist_ok=True)
         filename = "%s_%i_%s.txt" % (self.name, iteration+1, self.protection_string)
-        with open("%s/results/apache/%s" % (os.getcwd(), filename), "w") as f:
+        with open("%s/results/%s/%s" % (os.getcwd(), self.name, filename), "w") as f:
             f.write(output)
 
     def parse_benchmark_results(self):
