@@ -28,7 +28,7 @@ def is_valid_path(value):
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('-b', '--benchmarks', required=False, choices=["apache", "mysql"],
+parser.add_argument('-b', '--benchmarks', required=False, choices=os.listdir("%s/benchmarks" % os.getcwd()),
     help="""Specify specific benchmarks you want to run """
     """as a comma separted list. If you want to run all benchmarks, don't use this option"""
     """For example, to run the apache and mysql benchmarks, simple run "run.py -b apache -b mysql""")
@@ -108,7 +108,7 @@ def copy_image_to_remote(image_name):
     logger.info("Loading docker image %s on remote system" % image_name)
     run_remote_command("docker load -i ~/%s" % filename)
     run_remote_command("rm ~/%s" % filename)
-    os.remove("%s/filename" % os.getcwd())
+    os.remove("%s/%s" % (os.getcwd(), filename))
 
 def run_remote_image(image_name, port):
     logger.info("Running remote docker image %s" % image_name)
@@ -202,6 +202,11 @@ def run_benchmarks(args):
 
     generate_results_csv(results)
 
+def validate_run_location():
+    if not os.path.exists("%s/benchmarks" % os.getcwd()):
+        logger.fatal("This script must be run from the top level directory of the securityperf repository.")
+        exit(1)
+
 def main():
     """Main function"""
     args = parser.parse_args()
@@ -209,9 +214,9 @@ def main():
         args.iterations = args.iterations
     else:
         args.iterations = 5
+    validate_run_location()
     validate_ssh_host_connection(args.ip, args.user, args.password)
     validate_docker_install()
-
     run_benchmarks(args)
 
 if __name__ == '__main__':
