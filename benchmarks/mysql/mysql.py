@@ -12,18 +12,20 @@ from ..benchmark import Benchmark
 
 logging.basicConfig(level=logging.INFO)
 
-class ApacheBenchmark(Benchmark):
+class MysqlBenchmark(Benchmark):
 
     def __init__(self, *args, **kwargs):
-        super(ApacheBenchmark, self).__init__(*args, **kwargs)
-        self.name = "apache"
-        self.client_image_name = "apache_load_tester"
-        self.server_image_name = "apache"
+        super(MysqlBenchmark, self).__init__(*args, **kwargs)
+        self.name = "mysql"
+        self.client_image_name = "mysql_load_tester"
+        self.server_image_name = "mysql"
         self.logger = logging.getLogger(self.name + "_benchmark")
-        self.server_port = 80
+        self.server_port = 3306
+        self.service_initialization_delay = 10
+        self.remote_env = "-e MYSQL_DATABASE=sbtest -e MYSQL_ROOT_PASSWORD=pass"
 
     def parse_benchmark_results(self):
-        result = "Apache Results (%s):\n" % self.protection_string
+        result = "Mysql Results (%s):\n" % self.protection_string
         times = []
         run_info = []
         for run_data in sorted(os.listdir("%s/results/%s/%s" % (os.getcwd(), self.protection_string, self.name)), key=lambda f: int(f.split("_")[1])):
@@ -33,8 +35,8 @@ class ApacheBenchmark(Benchmark):
                 iteration = parts[1]
                 protection_status = parts[2].split(".")[0]
                 for line in lines:
-                    if "Requests per second" in line:
-                        times.append(float(line.split()[3]))
+                    if "transactions:" in line:
+                        times.append(float(line.split()[2][1:-1]))
                         run_info.append([iteration, protection_status])
                         break
         mean =  statistics.mean(times)
@@ -42,7 +44,7 @@ class ApacheBenchmark(Benchmark):
         if len(times) > 1:
             std_dev = statistics.stdev(times)
         for i, time in enumerate(times):
-            result += "\tRun %s requests per second (%s):\t%f\n" % (run_info[i][0], run_info[i][1], time)
-        result += "\tMean (requests per second): %f\n" % mean
-        result += "\tStandard Deviation (requests per second): %f\n" % std_dev
+            result += "\tRun %s transactions per second (%s):\t%f\n" % (run_info[i][0], run_info[i][1], time)
+        result += "\tMean (transactions per second): %f\n" % mean
+        result += "\tStandard Deviation (transactions per second): %f\n" % std_dev
         return result

@@ -10,6 +10,7 @@ import statistics
 import subprocess
 from benchmarks.benchmark import Benchmark
 from benchmarks.apache.apache import ApacheBenchmark
+from benchmarks.mysql.mysql import MysqlBenchmark
 
 logging.basicConfig(level=logging.INFO)
 client = paramiko.SSHClient()
@@ -30,7 +31,12 @@ def is_valid_path(value):
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('-b', '--benchmarks', required=False, choices=os.listdir("%s/benchmarks" % os.getcwd()),
+all_benchmarks = list(filter(lambda f: os.path.isdir("%s/benchmarks/%s" % (os.getcwd(), f)) and f != "__pycache__",
+        os.listdir("%s/benchmarks" % os.getcwd())))
+
+parser.add_argument('-b', '--benchmarks', required=False,
+        choices=all_benchmarks,
+        nargs='+', default=all_benchmarks,
     help="""Specify specific benchmarks you want to run """
     """as a comma separted list. If you want to run all benchmarks, don't use this option"""
     """For example, to run the apache and mysql benchmarks, simple run "run.py -b apache -b mysql""")
@@ -83,33 +89,37 @@ def validate_docker_install():
         logger.fatal("Docker engine is not present on the remote system. Please install docker on the remote system.")
         exit(1)
 
-def generate_results_file(results):
-    try:
-        os.remove("%s/results/summary_results.csv" % os.getcwd())
-    except FileNotFoundError:
-        pass
-    with open('results/summary_results.txt', 'w') as f:
-        f.write(results)
-
 def validate_run_location():
     if not os.path.exists("%s/benchmarks" % os.getcwd()):
         logger.fatal("This script must be run from the top level directory of the securityperf repository.")
         exit(1)
+
+def clean_existing_results(protection_string):
+    path = "%s/results/%s" % (os.getcwd(), protection_string)
+    for root, dirs, files in os.walk(path, topdown=False):
+        for name in files:
+            os.remove(os.path.join(root, name))
+        for name in dirs:
+            os.rmdir(os.path.join(root, name))
 
 def run_benchmarks(args):
     results = ""
     protection_string = "unprotected"
     if args.security_enabled:
         protection_string = "protected"
-    benchmarks = {"apache": ApacheBenchmark(client, args.ip, protection_string)}
+    benchmarks = {"apache": ApacheBenchmark(client, args.ip, protection_string),
+            "mysql": MysqlBenchmark(client, args.ip, protection_string)}
 
-    if not args.benchmarks:
-        for benchmark, benchmark_runner in benchmarks.items():
-            benchmark_runner.clean_results()
-            for i in range(args.iterations):
-                benchmark_runner.run_benchmark(i)
-            results += benchmark_runner.parse_benchmark_results()
-    generate_results_file(results)
+    clean_existing_results(protection_string)
+
+    for benchmark in args.benchmarks:
+        benchmark_runner = benchmarks[benchmark]
+        for i in range(args.iterations):
+            benchmark_runner.run_benchmark(i)
+        results += benchmark_runner.parse_benchmark_results()
+
+    with open('results/%s/summary_results.txt' % protection_string, 'w') as f:
+        f.write(results)
 
 def main():
     """Main function"""

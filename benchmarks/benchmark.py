@@ -7,12 +7,16 @@ import paramiko
 import scp
 import statistics
 import subprocess
+from time import sleep
 
 class Benchmark:
     def __init__(self, ssh_client, remote_ip, protection_string):
         self.client = ssh_client
         self.remote_ip = remote_ip
         self.protection_string = protection_string
+        self.service_initialization_delay = 0
+        self.remote_env = ""
+        self.times = []
 
     def run_remote_command(self, command, raise_exception=False, exception_message=""):
         stdin,stdout,stderr=self.client.exec_command(command)
@@ -62,7 +66,12 @@ class Benchmark:
             self.logger.info("Remote docker image %s exists on remote system." % image_name)
 
         self.run_remote_command("docker kill %s" % (image_name))
-        self.run_remote_command("docker run --rm --name %s -d -p %d:%d %s" % (image_name, port, port, image_name), True)
+        self.run_remote_command("docker run %s --rm --name %s -d -p %d:%d %s" %
+                (self.remote_env, image_name, port, port, image_name), True)
+        if self.service_initialization_delay:
+            self.logger.info("Sleeping for %s seconds so remote service is ready for benchmarking" %
+                    self.service_initialization_delay)
+            sleep(self.service_initialization_delay)
 
     def run_benchmark_image(self, image_name, ip):
         old_cwd = os.getcwd()
@@ -72,11 +81,19 @@ class Benchmark:
         subprocess.check_output(["docker", "run", "-e", "REMOTE_TESTING_HOST=%s" % ip, "--name", image_name, image_name])
         os.chdir(old_cwd)
 
+    def run_benchmark(self, iteration):
+        if not self.docker_image_exists(self.client_image_name):
+            self.logger.info("Client docker image %s does not exist. Building it now." % (self.client_image_name))
+            self.build_docker_image(self.client_image_name)
+        if not self.docker_image_exists(self.server_image_name):
+            self.logger.info("Docker image %s does not exist. Building it now." % (self.server_image_name))
+            self.build_docker_image(self.server_image_name)
+        self.run_remote_image(self.server_image_name, self.server_port)
 
-    def clean_results(self):
-        path = "%s/results/%s" % (os.getcwd(), self.name)
-        if os.path.exists(path):
-            for f in os.listdir(path):
-                if self.protection_string in f:
-                    os.remove(path + "/" + f)
+        self.run_benchmark_image(self.client_image_name, self.remote_ip)
+        output = subprocess.check_output(["docker", "logs", self.client_image_name], stderr=subprocess.DEVNULL).decode("utf-8")
 
+        os.makedirs("%s/results/%s/%s" % (os.getcwd(), self.protection_string, self.name), exist_ok=True)
+        filename = "%s_%i_%s.txt" % (self.name, iteration+1, self.protection_string)
+        with open("%s/results/%s/%s/%s" % (os.getcwd(), self.protection_string, self.name, filename), "w") as f:
+            f.write(output)
