@@ -100,3 +100,28 @@ class Benchmark:
         self.run_remote_command("docker kill %s" % (self.server_image_name))
         subprocess.run(["docker", "kill", self.client_image_name], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
         subprocess.run(["docker", "rm", self.client_image_name], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+
+    def parse_benchmark_results(self):
+        result = self.results_header
+        times = []
+        run_info = []
+        for run_data in sorted(os.listdir("%s/results/%s/%s" % (os.getcwd(), self.protection_string, self.name)), key=lambda f: int(f.split("_")[1])):
+            with open("%s/results/%s/%s/%s" % (os.getcwd(), self.protection_string, self.name, run_data)) as f:
+                lines = f.readlines()
+                parts = run_data.split("_")
+                iteration = parts[1]
+                protection_status = parts[2].split(".")[0]
+                for line in lines:
+                    if self.target_token in line:
+                        times.append(self.line_parser(line))
+                        run_info.append([iteration, protection_status])
+                        break
+        mean =  statistics.mean(times)
+        std_dev = 0
+        if len(times) > 1:
+            std_dev = statistics.stdev(times)
+        for i, time in enumerate(times):
+            result += "\tRun %s %s:\t%f\n" % (run_info[i][0], self.metric_units, time)
+        result += "\tMean %s: %f\n" % (self.metric_units, mean)
+        result += "\tStandard Deviation %s: %f\n" % (self.metric_units, std_dev)
+        return result
