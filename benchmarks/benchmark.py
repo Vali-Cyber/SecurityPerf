@@ -97,3 +97,6 @@ class Benchmark:
         filename = "%s_%i_%s.txt" % (self.name, iteration+1, self.protection_string)
         with open("%s/results/%s/%s/%s" % (os.getcwd(), self.protection_string, self.name, filename), "w") as f:
             f.write(output)
+
+        self.run_remote_command("docker kill %s" % (self.server_image_name))
+        subprocess.run(["docker", "kill", self.client_image_name], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
