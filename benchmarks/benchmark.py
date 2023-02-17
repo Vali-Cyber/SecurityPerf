@@ -56,29 +56,28 @@ class Benchmark:
         self.run_remote_command("rm ~/%s" % filename)
         os.remove("%s/%s" % (os.getcwd(), filename))
 
-    def run_remote_image(self, image_name, port):
-        self.logger.info("Running remote docker image %s" % image_name)
+    def run_remote_image(self):
+        self.logger.info("Running remote docker image %s" % self.server_image_name)
         remote_images = self.run_remote_command("docker image ls")
-        if image_name not in str(remote_images):
-            self.logger.info("Remote docker image %s does not exist on remote system." % image_name)
-            self.copy_image_to_remote(image_name)
+        if self.server_image_name not in str(remote_images):
+            self.logger.info("Remote docker image %s does not exist on remote system." % self.server_image_name)
+            self.copy_image_to_remote(self.server_image_name)
         else:
-            self.logger.info("Remote docker image %s exists on remote system." % image_name)
+            self.logger.info("Remote docker image %s exists on remote system." % self.server_image_name)
 
-        self.run_remote_command("docker kill %s" % (image_name))
-        self.run_remote_command("docker run %s --rm --name %s -d -p %d:%d %s" %
-                (self.remote_env, image_name, port, port, image_name), True)
+        self.run_remote_command("docker kill %s" % (self.server_image_name))
+        self.run_remote_command(" ".join(self.server_command), True)
         if self.service_initialization_delay:
             self.logger.info("Sleeping for %s seconds so remote service is ready for benchmarking" %
                     self.service_initialization_delay)
             sleep(self.service_initialization_delay)
 
-    def run_benchmark_image(self, image_name, ip):
+    def run_client_image(self):
         old_cwd = os.getcwd()
-        os.chdir("./benchmarks/%s/%s" % (self.name, image_name))
-        self.logger.info("Running benchmark image %s", image_name)
-        subprocess.run(["docker", "rm", image_name], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
-        subprocess.check_output(["docker", "run", "-e", "REMOTE_TESTING_HOST=%s" % ip, "--name", image_name, image_name])
+        os.chdir("./benchmarks/%s/%s" % (self.name, self.client_image_name))
+        self.logger.info("Running benchmark image %s", self.client_image_name)
+        subprocess.run(["docker", "rm", self.client_image_name], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+        subprocess.check_output(self.client_command)
         os.chdir(old_cwd)
 
     def run_benchmark(self, iteration):
@@ -88,9 +87,9 @@ class Benchmark:
         if not self.docker_image_exists(self.server_image_name):
             self.logger.info("Docker image %s does not exist. Building it now." % (self.server_image_name))
             self.build_docker_image(self.server_image_name)
-        self.run_remote_image(self.server_image_name, self.server_port)
+        self.run_remote_image()
 
-        self.run_benchmark_image(self.client_image_name, self.remote_ip)
+        self.run_client_image()
         output = subprocess.check_output(["docker", "logs", self.client_image_name], stderr=subprocess.DEVNULL).decode("utf-8")
 
         os.makedirs("%s/results/%s/%s" % (os.getcwd(), self.protection_string, self.name), exist_ok=True)
@@ -100,3 +99,4 @@ class Benchmark:
 
         self.run_remote_command("docker kill %s" % (self.server_image_name))
         subprocess.run(["docker", "kill", self.client_image_name], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+        subprocess.run(["docker", "rm", self.client_image_name], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)

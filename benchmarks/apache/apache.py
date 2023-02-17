@@ -20,7 +20,10 @@ class ApacheBenchmark(Benchmark):
         self.client_image_name = "apache_load_tester"
         self.server_image_name = "apache"
         self.logger = logging.getLogger(self.name + "_benchmark")
-        self.server_port = 80
+        self.client_command = ["docker", "run", "-e", "REMOTE_TESTING_HOST=%s" % self.remote_ip,
+            "--name", self.client_image_name, self.client_image_name]
+        self.server_command = ["docker", "run", "--rm", "-d", "--name", self.server_image_name,
+            "-p", "%d:%d" % (80, 80), self.server_image_name]
 
     def parse_benchmark_results(self):
         result = "Apache Results (%s):\n" % self.protection_string

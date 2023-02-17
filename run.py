@@ -11,6 +11,7 @@ import subprocess
 from benchmarks.benchmark import Benchmark
 from benchmarks.apache.apache import ApacheBenchmark
 from benchmarks.mysql.mysql import MysqlBenchmark
+from benchmarks.rabbitmq.rabbitmq import RabbitmqBenchmark
 
 logging.basicConfig(level=logging.INFO)
 client = paramiko.SSHClient()
@@ -108,7 +109,8 @@ def run_benchmarks(args):
     if args.security_enabled:
         protection_string = "protected"
     benchmarks = {"apache": ApacheBenchmark(client, args.ip, protection_string),
-            "mysql": MysqlBenchmark(client, args.ip, protection_string)}
+            "mysql": MysqlBenchmark(client, args.ip, protection_string),
+            "rabbitmq": RabbitmqBenchmark(client, args.ip, protection_string)}
 
     clean_existing_results(protection_string)
 
