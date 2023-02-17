@@ -13,6 +13,7 @@ from benchmarks.apache.apache import ApacheBenchmark
 from benchmarks.mysql.mysql import MysqlBenchmark
 from benchmarks.rabbitmq.rabbitmq import RabbitmqBenchmark
 from benchmarks.mongodb.mongodb import MongodbBenchmark
+from benchmarks.wordpress.wordpress import WordpressBenchmark
 
 logging.basicConfig(level=logging.INFO)
 client = paramiko.SSHClient()
@@ -112,7 +113,8 @@ def run_benchmarks(args):
     benchmarks = {"apache": ApacheBenchmark(client, args.ip, protection_string),
             "mysql": MysqlBenchmark(client, args.ip, protection_string),
             "rabbitmq": RabbitmqBenchmark(client, args.ip, protection_string),
-            "mongodb": MongodbBenchmark(client, args.ip, protection_string)}
+            "mongodb": MongodbBenchmark(client, args.ip, protection_string),
+            "wordpress": WordpressBenchmark(client, args.ip, protection_string)}
 
     clean_existing_results(protection_string)
 

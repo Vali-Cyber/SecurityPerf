@@ -45,8 +45,11 @@ class Benchmark:
             exit(1)
         os.chdir(old_cwd)
 
-    def copy_image_to_remote(self, image_name):
-        filename = "%s.tar" % image_name
+    def copy_file_to_remote(self, filename):
+        scp_client = scp.SCPClient(self.client.get_transport())
+        scp_client.put(filename)
+
+    def copy_image_to_remote(self, filename):
         self.logger.info("Copying docker image %s to the remote system" % image_name)
         subprocess.check_output(["docker", "image", "save", image_name, "-o", filename])
         scp_client = scp.SCPClient(self.client.get_transport())
@@ -61,7 +64,7 @@ class Benchmark:
         remote_images = self.run_remote_command("docker image ls")
         if self.server_image_name not in str(remote_images):
             self.logger.info("Remote docker image %s does not exist on remote system." % self.server_image_name)
-            self.copy_image_to_remote(self.server_image_name)
+            self.copy_image_to_remote("%s.tar" % self.server_image_name)
         else:
             self.logger.info("Remote docker image %s exists on remote system." % self.server_image_name)
 
@@ -80,13 +83,22 @@ class Benchmark:
         subprocess.check_output(self.client_command)
         os.chdir(old_cwd)
 
-    def run_benchmark(self, iteration):
+    def build_client_image(self):
         if not self.docker_image_exists(self.client_image_name):
             self.logger.info("Client docker image %s does not exist. Building it now." % (self.client_image_name))
             self.build_docker_image(self.client_image_name)
+
+    def build_server_image(self):
         if not self.docker_image_exists(self.server_image_name):
             self.logger.info("Docker image %s does not exist. Building it now." % (self.server_image_name))
             self.build_docker_image(self.server_image_name)
+
+    def stop_remote_image(self):
+        self.run_remote_command("docker kill %s" % (self.server_image_name))
+
+    def run_benchmark(self, iteration):
+        self.build_client_image()
+        self.build_server_image()
         self.run_remote_image()
 
         self.run_client_image()
@@ -97,7 +109,7 @@ class Benchmark:
         with open("%s/results/%s/%s/%s" % (os.getcwd(), self.protection_string, self.name, filename), "w") as f:
             f.write(output)
 
-        self.run_remote_command("docker kill %s" % (self.server_image_name))
+        self.stop_remote_image()
         subprocess.run(["docker", "kill", self.client_image_name], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
         subprocess.run(["docker", "rm", self.client_image_name], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
 
