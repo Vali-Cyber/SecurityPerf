@@ -49,8 +49,9 @@ class Benchmark:
         scp_client = scp.SCPClient(self.client.get_transport())
         scp_client.put(filename)
 
-    def copy_image_to_remote(self, filename):
-        self.logger.info("Copying docker image %s to the remote system" % image_name)
+    def copy_image_to_remote(self, image_name):
+        filename = "%s.tar" % image_name
+        self.logger.info("Copying docker image %s to the remote system" % filename)
         subprocess.check_output(["docker", "image", "save", image_name, "-o", filename])
         scp_client = scp.SCPClient(self.client.get_transport())
         scp_client.put(filename)
@@ -64,7 +65,7 @@ class Benchmark:
         remote_images = self.run_remote_command("docker image ls")
         if self.server_image_name not in str(remote_images):
             self.logger.info("Remote docker image %s does not exist on remote system." % self.server_image_name)
-            self.copy_image_to_remote("%s.tar" % self.server_image_name)
+            self.copy_image_to_remote(self.server_image_name)
         else:
             self.logger.info("Remote docker image %s exists on remote system." % self.server_image_name)
 

@@ -38,10 +38,14 @@ class WordpressBenchmark(Benchmark):
         self.run_remote_command("docker stack rm wordpress")
         self.run_remote_command("docker swarm init")
         self.copy_file_to_remote("%s/benchmarks/wordpress/wordpress/wordpress_stack.yml" % os.getcwd())
-        self.run_remote_command("docker stack deploy -c ~/wordpress_stack.yml wordpress")
+        self.run_remote_command("docker stack deploy -c ~/wordpress_stack.yml wordpress", True, "Failed to deploy wordpress stack")
         self.logger.info("Sleeping for %d seconds while services start" % 10)
         sleep(10)
 
     def stop_remote_image(self):
+        self.run_remote_command("rm ~/wordpress_stack.yml")
+        self.run_remote_command("docker stack rm wordpress")
         self.run_remote_command("docker swarm leave --force")
         self.logger.info("Sleeping for %d seconds while services shutdown" % 5)
+        sleep(5)
+
