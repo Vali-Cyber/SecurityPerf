@@ -37,7 +37,7 @@ class WordpressBenchmark(Benchmark): # pylint: disable=too-many-instance-attribu
         self.copy_file_to_remote("%s/benchmarks/wordpress/wordpress/wordpress_stack.yml"
                                  % os.getcwd())
         self.run_remote_command("docker stack deploy -c ~/wordpress_stack.yml wordpress",
-                                True, "Failed to deploy wordpress stack")
+                                True)
         self.logger.info("Sleeping for %d seconds while services start", 10)
         sleep(10)
 
@@ -48,3 +48,5 @@ class WordpressBenchmark(Benchmark): # pylint: disable=too-many-instance-attribu
         self.run_remote_command("docker swarm leave --force")
         self.logger.info("Sleeping for %d seconds while services shutdown", 5)
         sleep(5)
+        self.run_remote_command("docker volume rm wordpress_db wordpress_wordpress")
+        sleep(1)

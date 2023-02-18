@@ -31,7 +31,7 @@ class Benchmark: # pylint: disable=too-many-instance-attributes
 
     def run_remote_command(self, command, raise_exception=False):
         """Run command on remote system with SSH"""
-        stdout, stderr = self.client.exec_command(command)
+        _, stdout, stderr = self.client.exec_command(command)
         exit_status = stderr.channel.recv_exit_status()
         if exit_status:
             self.logger.error("Remote command %s failed", command)
