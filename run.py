@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Program to download MITRE EVAL jsons"""
+"""Program to run various benchmarks for popular Linux software"""
 import argparse
 import logging
 import os
