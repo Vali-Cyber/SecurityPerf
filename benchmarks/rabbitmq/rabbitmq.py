@@ -15,10 +15,10 @@ class RabbitmqBenchmark(Benchmark): # pylint: disable=too-many-instance-attribut
         self.client_image_name = "rabbitmq_load_tester"
         self.server_image_name = "rabbitmq"
         self.logger = logging.getLogger(self.name + "_benchmark")
-        self.service_initialization_delay = 10
+        self.service_initialization_delay = 20
         self.client_command = ["docker", "run", "--network=host", "--name",
                                self.client_image_name, self.client_image_name,
-                               "--uri", "amqp://%s" % self.remote_ip, "-z", "5"]
+                               "--uri", "amqp://%s" % self.remote_ip, "-z", "30"]
         self.server_command = ["docker", "run", "-d", "--rm", "--name",
                                self.server_image_name, "--network=host", self.server_image_name]
         self.results_header = "Rabbitmq Results (%s):\n" % self.protection_string

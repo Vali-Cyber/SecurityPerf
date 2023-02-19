@@ -21,7 +21,7 @@ class WordpressBenchmark(Benchmark): # pylint: disable=too-many-instance-attribu
                                "--name", self.client_image_name, self.client_image_name]
         self.server_command = ["docker", "run", "--rm", "-d", "--name", self.server_image_name,
                                "-p", "%d:%d" % (80, 80), self.server_image_name]
-        self.results_header = "Apache Results (%s):\n" % self.protection_string
+        self.results_header = "WordPress Results (%s):\n" % self.protection_string
         self.target_token = "Requests per second"
         self.line_parser = lambda line: float(line.split()[3])
         self.metric_units = "requests per second"

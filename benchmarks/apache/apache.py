@@ -14,6 +14,7 @@ class ApacheBenchmark(Benchmark): # pylint: disable=too-many-instance-attributes
         self.name = "apache"
         self.client_image_name = "apache_load_tester"
         self.server_image_name = "apache"
+        self.service_initialization_delay = 5
         self.logger = logging.getLogger(self.name + "_benchmark")
         self.client_command = ["docker", "run", "-e", "REMOTE_TESTING_HOST=%s" % self.remote_ip,
                                "--name", self.client_image_name, self.client_image_name]
