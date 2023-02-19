@@ -106,6 +106,13 @@ def clean_existing_results(protection_string):
     """Clean out stale results files"""
     path = "%s/results/%s" % (os.getcwd(), protection_string)
     for root, dirs, files in os.walk(path, topdown=False):
+        if len(files) != 0 and len(dirs) != 0:
+            result = input("""There are old results files in the 'results' directory. """
+                           """They will be deleted by this operation. """
+                           """Are you sure you want to proceed? (y/n): """)
+            if len(result) != 0 and (result[0] == "n" or result == "N"[0]):
+                print("Exiting now. Please store old results in an alternate location")
+                sys.exit(1)
         for name in files:
             os.remove(os.path.join(root, name))
         for name in dirs:
@@ -137,6 +144,10 @@ def run_benchmarks(args):
 def main():
     """Main function"""
     args = parser.parse_args()
+    protection_string = "unprotected"
+    if args.security_enabled:
+        protection_string = "protected"
+    clean_existing_results(protection_string)
     if not args.iterations:
         args.iterations = 5
     validate_run_location()
