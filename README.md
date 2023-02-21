@@ -4,13 +4,12 @@ SecurityPerf is a tool designed to make benchmarking production workloads easy.
 The development of SecurityPerf was motivated by the need to accurately determine
 the overhead of a security solution when it is deployed on diverse production
 workloads in a manner that is reproducible by anyone and provides meaningful results
-to maintainers of enterprise-grade production systems.
+for enterprise-grade production systems.
 Many benchmarking tools and suites exist, though some are expensive
 and many are specific to a given use case. SecurityPerf addresses these problems
 by providing an open source, always free to use solution that leverages other
 open-source benchmarking tools and containerization to allow anyone to run
-realistic benchmarks for common production workloads if they have the ability
-to run two virtual machines.
+realistic benchmarks for common production workloads.
 
 SecurityPerf focuses on Linux server software. The currently available benchmarks
 are:
@@ -34,9 +33,9 @@ as quickly as we can.
 
 # Prerequisites
 
-To use security perf, you need two Linux VMs that have the latest Docker engine
+To use SecurityPerf, you need two Linux VMs that have the latest Docker engine
 installed. Also, one of the VMs must have SSH installed. SecurityPerf uses
-password based SSH authentication to log in to VMs.
+password-based SSH authentication to log in to VMs.
 
 # How It Works
 
@@ -86,6 +85,6 @@ details about each field.
 
 If a benchmark doesn't connect to its service, it may be caused by the service
 not being ready yet. Each benchmark subclass defines a parameter called
-`service_initialization_delay`. This class member defines how long the benchmark
+`service\_initialization\_delay`. This class member defines how long the benchmark
 should wait for the service to be ready. Increasing this number will address
 issues caused by a service being slow to start.
