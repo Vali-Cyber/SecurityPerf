@@ -84,7 +84,7 @@ overrides some functions the Benchmarks class defines. The reason for this
 distinction is the fact that WordPress starts two services rather than one,
 Apache and MySQL.
 
-For more detail, look at the apache.py script. It is commented well with
+For more detail, look at the `apache.py` script. It is commented well with
 details about each field.
 
 # Common Pitfalls
