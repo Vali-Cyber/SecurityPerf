@@ -21,11 +21,11 @@ all_benchmarks = list(
                and f != "__pycache__",
                os.listdir("%s/benchmarks" % os.getcwd())))
 
-parser.add_argument('-pf', '--protected-file', type=check_file_exists, required=True,
+parser.add_argument('-p', '--protected', type=check_file_exists, required=True,
                     help="""The summary_results.txt file containing the data for a protected """
                          """run.""")
 
-parser.add_argument('-uf', '--unprotected-file', type=check_file_exists, required=True,
+parser.add_argument('-u', '--unprotected', type=check_file_exists, required=True,
                     help="""The summary_results.txt file containing the data for an unprotected """
                          """run.""")
 
@@ -80,7 +80,7 @@ def compare_files(protected_file, unprotected_file):
 def main():
     """Main function"""
     args = parser.parse_args()
-    compare_files(args.protected_file, args.unprotected_file)
+    compare_files(args.protected, args.unprotected)
 
 if __name__ == '__main__':
     main()

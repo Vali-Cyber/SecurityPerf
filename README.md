@@ -71,6 +71,20 @@ instantiation of the `run.py` script that will run only the Apache benchmark.
 
 `./run.py -ip 192.168.1.2 -u username -p password -b apache`
 
+SecurityPerf is designed to compare the results from two runs. A single run
+will produce a `summary\_results.txt` file in the `benchmarks` directory.
+All results are stored in a subdirectory of results that contains the protection
+status of the benchmark and a timestamp of the benchmark. An example name is `unprotected\_2023-02-20\_21-18-22`.
+To change the protection status for the results directory, use the `-se` flag
+that `run.py` provides.
+
+You may compare two `summary\_results.txt` files using `compare.py`. `compare.py`
+will produce a file called `comparison\_results.txt`. Here is an example
+invocation of the script:
+
+`./compare.py  --protected results/protected\_2023-02-20\_21-18-22/summary\_results.txt --unprotected results/unprotected\_2023-02-20\_22-19-13/summary\_results.txt`
+
+
 # Adding a New Benchmark
 
 To add a new benchmark, create a new subdirectory for the service
