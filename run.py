@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """Program to run various benchmarks for popular Linux software"""
 import argparse
+from datetime import datetime
 import logging
 import os
 import subprocess
@@ -102,35 +103,17 @@ def validate_run_location():
                      """of the securityperf repository.""")
         sys.exit(1)
 
-def clean_existing_results(protection_string):
-    """Clean out stale results files"""
-    path = "%s/results/%s" % (os.getcwd(), protection_string)
-    for root, dirs, files in os.walk(path, topdown=False):
-        if len(files) != 0 and len(dirs) != 0:
-            result = input("""There are old results files in the 'results' directory. """
-                           """They will be deleted by this operation. """
-                           """Are you sure you want to proceed? (y/n): """)
-            if len(result) != 0 and (result[0] == "n" or result == "N"[0]):
-                print("Exiting now. Please store old results in an alternate location")
-                sys.exit(1)
-        for name in files:
-            os.remove(os.path.join(root, name))
-        for name in dirs:
-            os.rmdir(os.path.join(root, name))
-
 def run_benchmarks(args):
     """Run each selected benchmark"""
     results = ""
-    protection_string = "unprotected"
+    protection_string = "unprotected_" + datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     if args.security_enabled:
-        protection_string = "protected"
+        protection_string = "protected_" + datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     benchmarks = {"apache": ApacheBenchmark(client, args.ip, protection_string),
                   "mysql": MysqlBenchmark(client, args.ip, protection_string),
                   "rabbitmq": RabbitmqBenchmark(client, args.ip, protection_string),
                   "mongodb": MongodbBenchmark(client, args.ip, protection_string),
                   "wordpress": WordpressBenchmark(client, args.ip, protection_string)}
-
-    clean_existing_results(protection_string)
 
     for benchmark in args.benchmarks:
         benchmark_runner = benchmarks[benchmark]
@@ -147,7 +130,6 @@ def main():
     protection_string = "unprotected"
     if args.security_enabled:
         protection_string = "protected"
-    clean_existing_results(protection_string)
     if not args.iterations:
         args.iterations = 5
     validate_run_location()

@@ -34,10 +34,14 @@ as quickly as we can.
 # Prerequisites
 
 To use SecurityPerf, you need two Linux VMs that have the latest Docker engine
-and python3 installed. The requirements.txt file provides the python dependencies
-required to run SecurityPerf. You can install the dependencies with `pip3 install -r requirements.txt`
-One of the VMs must have SSH installed. SecurityPerf uses
+and python3 installed. One of the VMs must have SSH installed. SecurityPerf uses
 password-based SSH authentication to log in to VMs.
+
+The requirements.txt file provides the python dependencies
+required to run SecurityPerf. You can install the dependencies with:
+
+`pip3 install -r requirements.txt`
+
 
 # How It Works
 
