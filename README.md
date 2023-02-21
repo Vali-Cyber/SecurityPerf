@@ -38,7 +38,7 @@ and python3 installed. One of the VMs must have SSH installed. SecurityPerf uses
 password-based SSH authentication to log in to VMs.
 
 The requirements.txt file provides the python dependencies
-required to run SecurityPerf. You can install the dependencies with:
+required to run SecurityPerf. You can install the dependencies with the following command.
 
 `pip3 install -r requirements.txt`
 
