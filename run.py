@@ -127,9 +127,6 @@ def run_benchmarks(args):
 def main():
     """Main function"""
     args = parser.parse_args()
-    protection_string = "unprotected"
-    if args.security_enabled:
-        protection_string = "protected"
     if not args.iterations:
         args.iterations = 5
     validate_run_location()
