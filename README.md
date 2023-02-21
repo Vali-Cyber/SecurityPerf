@@ -72,17 +72,17 @@ instantiation of the `run.py` script that will run only the Apache benchmark.
 `./run.py -ip 192.168.1.2 -u username -p password -b apache`
 
 SecurityPerf is designed to compare the results from two runs. A single run
-will produce a `summary\_results.txt` file in the `benchmarks` directory.
+will produce a `summary_results.txt` file in the `benchmarks` directory.
 All results are stored in a subdirectory of results that contains the protection
-status of the benchmark and a timestamp of the benchmark. An example name is `unprotected\_2023-02-20\_21-18-22`.
+status of the benchmark and a timestamp of the benchmark. An example name is `unprotected_2023-02-20_21-18-22`.
 To change the protection status for the results directory, use the `-se` flag
 that `run.py` provides.
 
-You may compare two `summary\_results.txt` files using `compare.py`. `compare.py`
-will produce a file called `comparison\_results.txt`. Here is an example
+You may compare two `summary_results.txt` files using `compare.py`. `compare.py`
+will produce a file called `comparison_results.txt`. Here is an example
 invocation of the script:
 
-`./compare.py  --protected results/protected\_2023-02-20\_21-18-22/summary\_results.txt --unprotected results/unprotected\_2023-02-20\_22-19-13/summary\_results.txt`
+`./compare.py  --protected results/protected_2023-02-20_21-18-22/summary_results.txt --unprotected results/unprotected_2023-02-20_22-19-13/summary_results.txt`
 
 
 # Adding a New Benchmark
@@ -105,6 +105,6 @@ details about each field.
 
 If a benchmark doesn't connect to its service, it may be caused by the service
 not being ready yet. Each benchmark subclass defines a parameter called
-`service\_initialization\_delay`. This class member defines how long the benchmark
+`service_initialization_delay`. This class member defines how long the benchmark
 should wait for the service to be ready. Increasing this number will address
 issues caused by a service being slow to start.
