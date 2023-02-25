@@ -33,7 +33,7 @@ class WordpressBenchmark(Benchmark): # pylint: disable=too-many-instance-attribu
     def run_remote_image(self):
         """Run remote container images with docker swarm"""
         self.run_remote_command("docker stack rm wordpress")
-        self.run_remote_command("docker swarm init")
+        self.run_remote_command("docker swarm init --default-addr-pool 40.40.0.0/16")
         self.copy_file_to_remote("%s/benchmarks/wordpress/wordpress/wordpress_stack.yml"
                                  % os.getcwd())
         self.run_remote_command("docker stack deploy -c ~/wordpress_stack.yml wordpress",
