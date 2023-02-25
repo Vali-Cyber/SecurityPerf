@@ -29,6 +29,8 @@ class WordpressBenchmark(Benchmark): # pylint: disable=too-many-instance-attribu
 
     def build_server_image(self):
         """Don't build the sever image. Use the stack.yaml file instead"""
+        self.run_remote_command("docker pull wordpress:6.1.1-apache")
+        self.run_remote_command("docker pull mysql:5.7")
 
     def run_remote_image(self):
         """Run remote container images with docker swarm"""
