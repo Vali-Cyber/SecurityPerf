@@ -64,13 +64,13 @@ def compare_files(protected_file, unprotected_file):
     for test in protected_results:
         if test in unprotected_results:
             output += "%s\n" % test
-            mean_overhead = (protected_results[test]["mean"]
-                             - unprotected_results[test]["mean"]) / protected_results[test]["mean"]
+            mean_overhead = (unprotected_results[test]["mean"]
+                             - protected_results[test]["mean"]) / unprotected_results[test]["mean"]
             output += "\tProtected mean %s\n" % protected_results[test]["mean"]
             output += "\tUnprotected mean %s\n" % unprotected_results[test]["mean"]
             output += "\tProtected stdev %s\n" % protected_results[test]["stdev"]
             output += "\tUnprotected stdev %s\n" % unprotected_results[test]["stdev"]
-            output += "\tOverhead %f\n\n" % mean_overhead
+            output += "\tOverhead %f%%\n\n" % (mean_overhead*100)
         else:
             logger.warn("Test %s missing from unprotected results file.", test) # pylint: disable=deprecated-method
 
