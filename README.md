@@ -42,6 +42,14 @@ required to run SecurityPerf. You can install the dependencies with the followin
 
 `pip3 install -r requirements.txt`
 
+You must be able to run docker commands without `sudo` on both VMs. This step
+can be achieved with the following command:
+
+`sudo usermod -aG docker USERNAME`
+
+You cannot run any services on the VMs with ports that conflict with the services
+being tested. The services being tested use their default ports. For example,
+apache uses port 80.
 
 # How It Works
 
