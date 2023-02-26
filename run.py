@@ -41,7 +41,7 @@ parser.add_argument('-b', '--benchmarks', required=False,
                     """don't use this option For example, to run the apache and mysql """
                     """benchmarks, simple run "run.py -b apache -b mysql""")
 
-parser.add_argument('-i', '--iterations', type=check_positive, required=False,
+parser.add_argument('-i', '--iterations', default=5, type=check_positive, required=False,
                     help="""The number of times to run each benchmark. The default is 5.""")
 
 parser.add_argument('-ip', '--ip', required=True,
@@ -54,8 +54,8 @@ parser.add_argument('-p', '--password', required=True,
 parser.add_argument('-u', '--user', required=True,
                     help="""The user that should be used to log in to the remote system.""")
 
-parser.add_argument('-se', '--security-enabled', action="store_true",
-                    help="""Whether the system under test has securty enabled.""")
+parser.add_argument('-t', '--tag', type=str, default="baseline",
+                    help="""The name of the subdirectory used to store results.""")
 
 def run_remote_command(command, raise_exception=False):
     """Run command on remote system with SSH"""
@@ -106,9 +106,7 @@ def validate_run_location():
 def run_benchmarks(args):
     """Run each selected benchmark"""
     results = ""
-    protection_string = "unprotected_" + datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    if args.security_enabled:
-        protection_string = "protected_" + datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    protection_string = args.tag + "_" + datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     benchmarks = {"apache": ApacheBenchmark(client, args.ip, protection_string),
                   "mysql": MysqlBenchmark(client, args.ip, protection_string),
                   "rabbitmq": RabbitmqBenchmark(client, args.ip, protection_string),
@@ -127,8 +125,6 @@ def run_benchmarks(args):
 def main():
     """Main function"""
     args = parser.parse_args()
-    if not args.iterations:
-        args.iterations = 5
     validate_run_location()
     validate_ssh_host_connection(args.ip, args.user, args.password)
     validate_docker_install()
