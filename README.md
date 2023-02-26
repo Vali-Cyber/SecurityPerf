@@ -33,35 +33,36 @@ as quickly as we can.
 
 # Prerequisites
 
-To use SecurityPerf, you need two Linux VMs that have the latest Docker engine
-and python3 installed. One of the VMs must have SSH installed. SecurityPerf uses
-password-based SSH authentication to log in to VMs.
+To use SecurityPerf, you need two Linux systems that have the latest Docker engine
+and python3 installed. One of the systems must have SSH installed. SecurityPerf uses
+password-based SSH authentication to log in to systems.
 
 The requirements.txt file provides the python dependencies
-required to run SecurityPerf. You can install the dependencies with the following command.
+required to run SecurityPerf. You must install the dependencies on the system where you
+run `run.py`. You can install the dependencies with the following command.
 
 `pip3 install -r requirements.txt`
 
-You must be able to run docker commands without `sudo` on both VMs. This step
+You must be able to run docker commands without `sudo` on both systems. This step
 can be achieved with the following command:
 
 `sudo usermod -aG docker USERNAME`
 
-You cannot run any services on the VMs with ports that conflict with the services
+You cannot run any services on the systems with ports that conflict with the services
 being tested. The services being tested use their default ports. For example,
 apache uses port 80.
 
 # How It Works
 
 SecurityPerf takes advantage of containerization to run diverse workloads and
-benchmarking tools on any Linux VM a user might choose. SecurityPerf uses
-two VMs, one that represents a server which runs the services being benchmarked
+benchmarking tools on any Linux system a user might choose. SecurityPerf uses
+two systems, one that represents a server which runs the services being benchmarked
 and one that represents the client.
-The client VM runs the benchmarking software.
+The client system runs the benchmarking software.
 
 SecurityPerf builds the container images located in the `benchmarks directory.
-It then copies service images to sever VM. Benchmark images remain on the
-client VM. The client VM runs the benchmarking software and puts the service
+It then copies service images to sever system. Benchmark images remain on the
+client system. The client system runs the benchmarking software and puts the service
 under load. After each iteration of a benchmarking test, SecurityPerf saves
 the results as a text file in the "results" directory under a subdirectory
 with the name of the service being tested. After all iterations of tests
@@ -74,7 +75,7 @@ parameters.
 
 # Getting started
 
-To get started, set up two VMs and run the Apache benchmark. Here is an example
+To get started, set up two systems and run the Apache benchmark. Here is an example
 instantiation of the `run.py` script that will run only the Apache benchmark.
 
 `./run.py -ip 192.168.1.2 -u username -p password -b apache`
