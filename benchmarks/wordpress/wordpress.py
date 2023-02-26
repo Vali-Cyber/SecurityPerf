@@ -40,8 +40,8 @@ class WordpressBenchmark(Benchmark): # pylint: disable=too-many-instance-attribu
                                  % os.getcwd())
         self.run_remote_command("docker stack deploy -c ~/wordpress_stack.yml wordpress",
                                 True)
-        self.logger.info("Sleeping for %d seconds while services start", 20)
-        sleep(20)
+        self.logger.info("Sleeping for %d seconds while services start", 30)
+        sleep(30)
 
     def stop_remote_image(self):
         """Stop and remove remote container images with docker swarm"""
