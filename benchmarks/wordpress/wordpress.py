@@ -16,6 +16,7 @@ class WordpressBenchmark(Benchmark): # pylint: disable=too-many-instance-attribu
         self.name = "wordpress"
         self.client_image_name = "wordpress_load_tester"
         self.server_image_name = "wordpress"
+        self.service_initialization_delay = 30
         self.logger = logging.getLogger(self.name + "_benchmark")
         self.client_command = ["docker", "run", "-e", "REMOTE_TESTING_HOST=%s" % self.remote_ip,
                                "--name", self.client_image_name, self.client_image_name]
@@ -25,7 +26,6 @@ class WordpressBenchmark(Benchmark): # pylint: disable=too-many-instance-attribu
         self.target_token = "Requests per second"
         self.line_parser = lambda line: float(line.split()[3])
         self.metric_units = "requests per second"
-
 
     def build_server_image(self):
         """Don't build the sever image. Use the stack.yaml file instead"""
@@ -40,8 +40,8 @@ class WordpressBenchmark(Benchmark): # pylint: disable=too-many-instance-attribu
                                  % os.getcwd())
         self.run_remote_command("docker stack deploy -c ~/wordpress_stack.yml wordpress",
                                 True)
-        self.logger.info("Sleeping for %d seconds while services start", 30)
-        sleep(30)
+        self.logger.info("Sleeping for %d seconds while services start", self.service_initialization_delay)
+        sleep(self.service_initialization_delay)
 
     def stop_remote_image(self):
         """Stop and remove remote container images with docker swarm"""
