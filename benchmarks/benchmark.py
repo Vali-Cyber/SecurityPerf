@@ -40,14 +40,15 @@ class Benchmark: # pylint: disable=too-many-instance-attributes
                                 (command, stderr.read()))
         else:
             self.logger.info("Remote command %s succeeded", command)
-        return stdout.read()
+        return stdout.read().decode("utf-8")
 
     def docker_image_exists(self, image_name): # pylint: disable=no-self-use
         """Check if docker image exists on local system"""
-        result = str(subprocess.check_output(["docker", "image", "ls", image_name]))
-        if image_name not in result:
-            return False
-        return True
+        images = subprocess.check_output(["docker", "image", "ls", image_name]).decode("utf-8").splitlines()
+        for line in images[1::]:
+            if image_name in line.split()[0]:
+                return True
+        return False
 
     def build_docker_image(self, image_name):
         """Build a docker image on the local system"""
@@ -82,14 +83,20 @@ class Benchmark: # pylint: disable=too-many-instance-attributes
     def run_remote_image(self):
         """Run a docker image on the remote system"""
         self.logger.info("Running remote docker image %s" % self.server_image_name)
-        remote_images = self.run_remote_command("docker image ls")
-        if self.server_image_name not in str(remote_images):
+        remote_images = self.run_remote_command("docker image ls").splitlines()
+        has_remote_image = False
+        for line in remote_images[1::]:
+            if self.server_image_name in line.split()[0]:
+                has_remote_image = True
+                break
+
+        if has_remote_image:
+            self.logger.info("Remote docker image %s exists on remote system."
+                             % self.server_image_name)
+        else:
             self.logger.info("Remote docker image %s does not exist on remote system."
                              % self.server_image_name)
             self.copy_image_to_remote(self.server_image_name)
-        else:
-            self.logger.info("Remote docker image %s exists on remote system."
-                             % self.server_image_name)
 
         self.run_remote_command("docker kill %s" % (self.server_image_name))
         self.run_remote_command(" ".join(self.server_command), True)
