@@ -100,7 +100,7 @@ You may compare two `summary_results.txt` files using `compare.py`. `compare.py`
 will produce a file called `comparison_results.txt`. Here is an example
 invocation of the `compare.py` script:
 
-`./compare.py  -modified results/protected_2023-02-20_21-18-22/summary_results.txt --baseline results/unprotected_2023-02-20_22-19-13/summary_results.txt`
+`./compare.py  --modified results/protected_2023-02-20_21-18-22/summary_results.txt --baseline results/unprotected_2023-02-20_22-19-13/summary_results.txt`
 
 
 # Adding a New Benchmark
