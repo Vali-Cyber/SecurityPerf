@@ -21,13 +21,13 @@ all_benchmarks = list(
                and f != "__pycache__",
                os.listdir("%s/benchmarks" % os.getcwd())))
 
-parser.add_argument('-p', '--protected', type=check_file_exists, required=True,
-                    help="""The summary_results.txt file containing the data for a protected """
-                         """run.""")
+parser.add_argument('-modified', '--modified', type=check_file_exists, required=True,
+                    help="""The summary_results.txt file containing the data for a modified """
+                         """system.""")
 
-parser.add_argument('-u', '--unprotected', type=check_file_exists, required=True,
-                    help="""The summary_results.txt file containing the data for an unprotected """
-                         """run.""")
+parser.add_argument('-b', '--baseline', type=check_file_exists, required=True,
+                    help="""The summary_results.txt file containing the data for a baseline """
+                         """system.""")
 
 
 def parse_results(data):
@@ -49,30 +49,30 @@ def parse_results(data):
             results[test] = {"mean": mean, "stdev": stdev}
     return results
 
-def compare_files(protected_file, unprotected_file):
+def compare_files(modified_file, baseline_file):
     """Compare two results files"""
-    protected_results = None
-    unprotected_results = None
-    with open(protected_file) as protected_f:
-        protected_results = parse_results(protected_f.readlines())
+    modified_results = None
+    baseline_results = None
+    with open(modified_file) as modified_f:
+        modified_results = parse_results(modified_f.readlines())
 
-    with open(unprotected_file) as unprotected_f:
-        unprotected_results = parse_results(unprotected_f.readlines())
+    with open(baseline_file) as baseline_f:
+        baseline_results = parse_results(baseline_f.readlines())
 
     output = ""
 
-    for test in protected_results:
-        if test in unprotected_results:
+    for test in modified_results:
+        if test in baseline_results:
             output += "%s\n" % test
-            mean_overhead = (unprotected_results[test]["mean"]
-                             - protected_results[test]["mean"]) / unprotected_results[test]["mean"]
-            output += "\tProtected mean %s\n" % protected_results[test]["mean"]
-            output += "\tUnprotected mean %s\n" % unprotected_results[test]["mean"]
-            output += "\tProtected stdev %s\n" % protected_results[test]["stdev"]
-            output += "\tUnprotected stdev %s\n" % unprotected_results[test]["stdev"]
+            mean_overhead = (baseline_results[test]["mean"]
+                             - modified_results[test]["mean"]) / baseline_results[test]["mean"]
+            output += "\tProtected mean %s\n" % modified_results[test]["mean"]
+            output += "\tUnmodified mean %s\n" % baseline_results[test]["mean"]
+            output += "\tProtected stdev %s\n" % modified_results[test]["stdev"]
+            output += "\tUnmodified stdev %s\n" % baseline_results[test]["stdev"]
             output += "\tOverhead %f%%\n\n" % (mean_overhead*100)
         else:
-            logger.warn("Test %s missing from unprotected results file.", test) # pylint: disable=deprecated-method
+            logger.warn("Test %s missing from baseline results file.", test) # pylint: disable=deprecated-method
 
         with open("comparison_results.txt", "w") as comparison_results:
             comparison_results.write(output)
@@ -80,7 +80,7 @@ def compare_files(protected_file, unprotected_file):
 def main():
     """Main function"""
     args = parser.parse_args()
-    compare_files(args.protected, args.unprotected)
+    compare_files(args.modified, args.baseline)
 
 if __name__ == '__main__':
     main()
