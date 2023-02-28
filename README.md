@@ -33,22 +33,30 @@ as quickly as we can.
 
 # Prerequisites
 
-To use SecurityPerf, you need two Linux systems that have the latest Docker engine
-and python3 installed. One of the systems must have SSH installed. SecurityPerf uses
-password-based SSH authentication to log in to systems.
+To use SecurityPerf, you need two Linux systems, Machine 1 and Machine 2. For the
+following description, it is assumed that Machine 1 is used to run `run.py`
+and Machine 2 is used to run the services being benchmarked.
 
-The requirements.txt file provides the python dependencies
-required to run SecurityPerf. You must install the dependencies on the system where you
-run `run.py`. You can install the dependencies with the following command.
+### Machine 1
 
-`pip3 install -r requirements.txt`
+Machine 1 requires the following:
 
-You must be able to run docker commands without `sudo` on both systems. This step
-can be achieved with the following command:
+1. Python dependencies installed via `pip3 install -r requirements.txt`
+2. The latest version of Docker engine installed.
+3. The user that is running `run.py` must be able to run Docker commands without
+requiring root access. This step can be achieved by adding the user to the Docker
+group via `sudo usermod -aG docker USERNAME`
 
-`sudo usermod -aG docker USERNAME`
+### Machine 2
 
-You cannot run any services on the systems with ports that conflict with the services
+Machine 2 requires the following:
+
+1. An SSH server with password-based login enabled.
+2. The latest version of Docker engine installed.
+3. The user that `run.py` is logging in as must be able to run Docker commands without
+requiring root access. This step can be achieved by adding the user to the Docker
+group via `sudo usermod -aG docker USERNAME`
+4. You cannot run any services on this system  with ports that conflict with the services
 being tested. The services being tested use their default ports. For example,
 apache uses port 80.
 
