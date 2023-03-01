@@ -126,3 +126,7 @@ not being ready yet. Each benchmark subclass defines a parameter called
 `service_initialization_delay`. This class member defines how long the benchmark
 should wait for the service to be ready. Increasing this number will address
 issues caused by a service being slow to start.
+
+# License
+
+SecurityPerf uses the GNU GPLv3 License.
