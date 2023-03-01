@@ -6,8 +6,8 @@ RUN ln -s /usr/bin/python2.7 /usr/bin/python
 RUN curl -O --location https://github.com/brianfrankcooper/YCSB/releases/download/0.17.0/ycsb-0.17.0.tar.gz
 RUN tar xfvz ycsb-0.17.0.tar.gz
 WORKDIR ycsb-0.17.0
-RUN sed -i -e 's/recordcount=1000/recordcount=300000/g' ./workloads/workloada && \
-    sed -i -e 's/operationcount=1000/operationcount=300000/g' ./workloads/workloada && \
+RUN sed -i -e 's/recordcount=1000/recordcount=500000/g' ./workloads/workloada && \
+    sed -i -e 's/operationcount=1000/operationcount=500000/g' ./workloads/workloada && \
     sed -i -e 's/readproportion=0.5/readproportion=0.4/g' ./workloads/workloada && \
     sed -i -e 's/updateproportion=0.5/updateproportion=0.4/g' ./workloads/workloada && \
     sed -i -e 's/scanproportion=0.0/scanproportion=0.1/g' ./workloads/workloada && \
