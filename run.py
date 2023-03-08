@@ -6,6 +6,8 @@ import logging
 import os
 import subprocess
 import sys
+
+import coloredlogs
 import paramiko
 
 from benchmarks.apache.apache import ApacheBenchmark
@@ -14,10 +16,15 @@ from benchmarks.rabbitmq.rabbitmq import RabbitmqBenchmark
 from benchmarks.mongodb.mongodb import MongodbBenchmark
 from benchmarks.wordpress.wordpress import WordpressBenchmark
 
-logging.basicConfig(level=logging.INFO)
+
 client = paramiko.SSHClient()
 client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+logging.basicConfig(level=logging.INFO)
+coloredlogs.install()
 logger = logging.getLogger('SecurityPerf')
+
+
 
 def check_positive(value):
     """Checks if value is positive"""
