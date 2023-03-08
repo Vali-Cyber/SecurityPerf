@@ -33,9 +33,12 @@ as quickly as we can.
 
 # Prerequisites
 
-To use SecurityPerf, you need two Linux systems, Machine 1 and Machine 2. For the
-following description, it is assumed that Machine 1 is used to run `run.py`
-and Machine 2 is used to run the services being benchmarked.
+To use SecurityPerf, you need two Linux systems, Machine 1 and Machine 2. Both machines
+require 1 GB of free RAM and 10GB of free disk space. The RAM is necessary for
+memory hungry programs such as MySQL, and the disk space is needed to store
+docker images on each system. For the following description, it is assumed that
+Machine 1 is used to run `run.py` and Machine 2 is used to run the services being
+benchmarked.
 
 ### Machine 1
 
