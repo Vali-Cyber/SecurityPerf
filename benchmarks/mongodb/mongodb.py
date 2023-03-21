@@ -14,7 +14,7 @@ class MongodbBenchmark(Benchmark): # pylint: disable=too-many-instance-attribute
         self.client_image_name = "mongodb_load_tester"
         self.server_image_name = "mongodb"
         self.logger = logging.getLogger(self.name + "_benchmark")
-        self.service_initialization_delay = 5
+        self.service_initialization_delay = 15
         self.client_command = ["docker", "run", "-e", "REMOTE_TESTING_HOST=%s" %
                                self.remote_ip, "--name", self.client_image_name,
                                self.client_image_name]

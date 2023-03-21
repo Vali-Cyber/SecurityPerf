@@ -14,7 +14,7 @@ class ApacheBenchmark(Benchmark): # pylint: disable=too-many-instance-attributes
         self.name = "apache" # The name of the benchmark
         self.client_image_name = "apache_load_tester" # The name for the client docker image. Make sure the string matches the name of the subdirectory which contain's the image's corresponding Dockerfile.
         self.server_image_name = "apache" # The name for the server docker image. Make sure the string matches the name of the subdirectory which contain's the image's corresponding Dockerfile.
-        self.service_initialization_delay = 5 # How long the benchmark image should wait to test the server image
+        self.service_initialization_delay = 15 # How long the benchmark image should wait to test the server image
         self.logger = logging.getLogger(self.name + "_benchmark") # The logger for the benchmark
         self.client_command = ["docker", "run", "-e", "REMOTE_TESTING_HOST=%s" % self.remote_ip,
                                "--name", self.client_image_name, self.client_image_name] # The command used to run the benchmark image
