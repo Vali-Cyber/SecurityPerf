@@ -66,10 +66,10 @@ def compare_files(modified_file, baseline_file):
             output += "%s\n" % test
             mean_overhead = (baseline_results[test]["mean"]
                              - modified_results[test]["mean"]) / baseline_results[test]["mean"]
-            output += "\tProtected mean %s\n" % modified_results[test]["mean"]
-            output += "\tUnmodified mean %s\n" % baseline_results[test]["mean"]
-            output += "\tProtected stdev %s\n" % modified_results[test]["stdev"]
-            output += "\tUnmodified stdev %s\n" % baseline_results[test]["stdev"]
+            output += "\tModified mean %s\n" % modified_results[test]["mean"]
+            output += "\tBaseline mean %s\n" % baseline_results[test]["mean"]
+            output += "\tModified stdev %s\n" % modified_results[test]["stdev"]
+            output += "\tBaseline stdev %s\n" % baseline_results[test]["stdev"]
             output += "\tOverhead %f%%\n\n" % (mean_overhead*100)
         else:
             logger.warn("Test %s missing from baseline results file.", test) # pylint: disable=deprecated-method
