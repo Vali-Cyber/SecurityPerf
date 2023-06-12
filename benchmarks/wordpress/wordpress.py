@@ -16,7 +16,7 @@ class WordpressBenchmark(Benchmark): # pylint: disable=too-many-instance-attribu
         self.name = "wordpress"
         self.client_image_name = "wordpress_load_tester"
         self.server_image_name = "wordpress"
-        self.service_initialization_delay = 60
+        self.service_initialization_delay = 90
         self.logger = logging.getLogger(self.name + "_benchmark")
         self.client_command = ["docker", "run", "-e", "REMOTE_TESTING_HOST=%s" % self.remote_ip,
                                "--name", self.client_image_name, self.client_image_name]

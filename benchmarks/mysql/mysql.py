@@ -15,7 +15,7 @@ class MysqlBenchmark(Benchmark): # pylint: disable=too-many-instance-attributes 
         self.client_image_name = "mysql_load_tester"
         self.server_image_name = "mysql"
         self.logger = logging.getLogger(self.name + "_benchmark")
-        self.service_initialization_delay = 35
+        self.service_initialization_delay = 95
         self.client_command = ["docker", "run", "-e", "REMOTE_TESTING_HOST=%s" % self.remote_ip,
                                "--name", self.client_image_name, self.client_image_name]
         self.server_command = ["docker", "run", "-d", "-e", " MYSQL_DATABASE=sbtest", "-e",
