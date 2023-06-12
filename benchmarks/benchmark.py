@@ -34,7 +34,7 @@ class Benchmark: # pylint: disable=too-many-instance-attributes
         _, stdout, stderr = self.client.exec_command(command)
         exit_status = stderr.channel.recv_exit_status()
         if exit_status:
-            self.logger.error("Remote command %s failed", command)
+            self.logger.info("Remote command %s failed", command)
             if raise_exception:
                 raise Exception("Remote command %s failed with error '%s'" %
                                 (command, stderr.read()))

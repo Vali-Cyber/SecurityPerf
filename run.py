@@ -123,6 +123,7 @@ def run_benchmarks(args):
     for benchmark in args.benchmarks:
         benchmark_runner = benchmarks[benchmark]
         for i in range(args.iterations):
+            logger.info("%s: Executing iteration %d/%d" % (benchmark, i+1, args.iterations))
             benchmark_runner.run_benchmark(i)
         results += benchmark_runner.parse_benchmark_results()
 
