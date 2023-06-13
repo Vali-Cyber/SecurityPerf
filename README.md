@@ -19,13 +19,7 @@ are:
 3. MySQL
 4. Rabbitmq
 5. WordPress (Using a MySQL database)
-
-Other planned benchmarks are:
-
-1. Postgress
-2. WordPress (Using a Postgress database)
-3. Postfix
-4. Apache Kafka
+6. Postgres
 
 Additional benchmarks are open for consideration. If there is a benchmark you'd
 like to see integrated into SecurityPerf, submit an issue and we'll respond
