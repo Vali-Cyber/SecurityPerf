@@ -16,6 +16,7 @@ from benchmarks.rabbitmq.rabbitmq import RabbitmqBenchmark
 from benchmarks.mongodb.mongodb import MongodbBenchmark
 from benchmarks.wordpress.wordpress import WordpressBenchmark
 from benchmarks.postgres.postgres import PostgresBenchmark
+from benchmarks.nginx.nginx import NginxBenchmark
 
 
 client = paramiko.SSHClient()
@@ -120,6 +121,7 @@ def run_benchmarks(args):
                   "rabbitmq": RabbitmqBenchmark(client, args.ip, protection_string),
                   "mongodb": MongodbBenchmark(client, args.ip, protection_string),
                   "wordpress": WordpressBenchmark(client, args.ip, protection_string),
+                  "nginx": NginxBenchmark(client, args.ip, protection_string),
                   "postgres": PostgresBenchmark(client, args.ip, protection_string)}
 
     for benchmark in args.benchmarks:
