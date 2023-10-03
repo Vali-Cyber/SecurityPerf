@@ -15,7 +15,7 @@ class PostgresBenchmark(Benchmark): # pylint: disable=too-many-instance-attribut
         self.client_image_name = "postgres_load_tester"
         self.server_image_name = "postgres"
         self.logger = logging.getLogger(self.name + "_benchmark")
-        self.service_initialization_delay = 5
+        self.service_initialization_delay = 10
         self.client_command = ["docker", "run", "-e", "REMOTE_TESTING_HOST=%s" % self.remote_ip,
                                "--name", self.client_image_name, self.client_image_name]
         self.server_command = ["docker", "run", "-d", "-e", "POSTGRES_PASSWORD=password", "-e",
