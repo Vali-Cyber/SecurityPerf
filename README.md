@@ -5,6 +5,7 @@ The development of SecurityPerf was motivated by the need to accurately determin
 the overhead of a security solution when it is deployed on diverse production
 workloads in a manner that is reproducible by anyone and provides meaningful results
 for enterprise-grade production systems.
+
 Many benchmarking tools and suites exist, though some are expensive
 and many are specific to a given use case. SecurityPerf addresses these problems
 by providing an open source, always free to use solution that leverages other
@@ -24,6 +25,9 @@ are:
 Additional benchmarks are open for consideration. If there is a benchmark you'd
 like to see integrated into SecurityPerf, submit an issue and we'll respond
 as quickly as we can.
+
+You can learn more about SecurityPerf from Austin Gadient's [talk at the Linux
+Security Summit North America 2023](https://www.youtube.com/watch?v=mqBYsqxZkUc)
 
 # Prerequisites
 
